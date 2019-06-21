@@ -1,24 +1,30 @@
 -- stack --resolver lts-13.20 script
 
+-- run it like `stack 2.hs < input.txt`
+
 import qualified Data.Set as Set
 
 main = do
     content <- getContents -- We need to pull contents out of IO. getConents returns IO String, we want String
     let contentLines = lines content :: [String] -- creates lines of contents
-    print $ findMatchingSet Set.empty contentLines
-    
-findMatchingSet :: Set.Set Int -> [String] -> IO Int
-findMatchingSet set contentLines = do
-    frequency <- getFrequency contentLines
-    if Set.lookup set frequency
+        matching = findMatchingSet Set.empty contentLines contentLines 0
+    print matching
 
-getFrequency :: [String] -> IO Int
-getFrequency contentLines = do
-    let convertedFunctions = map convert contentLines :: [Int -> Int] -- creates an array of functions that get an int and return an int
-    pure $ foldr (\ fn int -> fn int) 0 convertedFunctions
+findMatchingSet :: Set.Set Int -> [String] -> [String] -> Int -> Int
+findMatchingSet set orig contentLines value = do
+    case contentLines of
+        [] -> findMatchingSet set orig orig value
+        contentLine : newContentLines -> do
+            let val = convert' contentLine value
+            if Set.member val set  
+            then
+                val
+            else do
+                let newSet = Set.insert val set
+                findMatchingSet newSet orig newContentLines val
 
-convert :: String -> (Int -> Int)
-convert line = case line of
-    '+' : rest -> (\ x -> x + (read rest))
-    '-' : rest -> (\ x -> x - (read rest))
+convert' :: String -> Int -> Int
+convert' line value = case line of
+    '+' : rest -> value + (read rest)
+    '-' : rest -> value - (read rest)
     _ -> undefined

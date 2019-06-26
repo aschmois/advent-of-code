@@ -7,7 +7,7 @@ import qualified Data.Set as Set
 main = do
     content <- getContents -- We need to pull contents out of IO. getConents returns IO String, we want String
     let contentLines = lines content :: [String] -- creates lines of contents
-        matching = findMatchingSet Set.empty contentLines contentLines 0
+        matching = findMatchingSet (Set.singleton 0) contentLines contentLines 0
     print matching
 
 findMatchingSet :: Set.Set Int -> [String] -> [String] -> Int -> Int

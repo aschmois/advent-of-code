@@ -1,7 +1,7 @@
 -- stack --resolver lts-13.20 script
 
 -- run it like : `stack 2.hs`
--- for ghcid : stack --resolver lts-13.20 exec --package ghcid -- ghcid 1.hs --test :main
+-- for ghcid : stack --resolver lts-13.20 exec --package ghcid -- ghcid 2.hs --test :main
 
 import qualified Data.List as List
 
@@ -37,7 +37,7 @@ traverseMatch l1 lineList = case lineList of
 
 compare' :: String -> String -> Maybe String
 compare' l1 l2 = case foldr (\ (x, y) (count, acc) -> 
-                                    if x == y then (count, acc <> y) else (count + 1, acc)
+                                    if x == y then (count, y : acc) else (count + 1, acc)
                                 ) (0, "") (zip l1 l2) of
   (1, rest) -> Just rest
   _ -> Nothing
